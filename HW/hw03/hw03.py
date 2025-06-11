@@ -24,7 +24,16 @@ def num_eights(n):
     ...       ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n<10:
+        if n==8:
+            return 1
+        else:
+            return 0
+    else:
+        if n%10==8:
+            return 1+num_eights(n//10)
+        else:
+            return num_eights(n//10)
 
 
 def digit_distance(n):
@@ -46,7 +55,10 @@ def digit_distance(n):
     ...       ['For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n<10:
+        return 0
+    else:
+        return digit_distance(n//10)+abs(n%10-n//10%10)
 
 
 def interleaved_sum(n, odd_func, even_func):
@@ -70,7 +82,19 @@ def interleaved_sum(n, odd_func, even_func):
     >>> check(HW_SOURCE_FILE, 'interleaved_sum', ['BitAnd', 'BitOr', 'BitXor']) # ban bitwise operators, don't worry about these if you don't know what they are
     True
     """
-    "*** YOUR CODE HERE ***"
+    def helper(k,n,odd_func, even_func):
+        if k<=n:
+            return odd_func(k)+helper2(k+1,n,odd_func,even_func)
+        else:
+            return 0
+    def helper2(k,n,odd_func, even_func):
+        if k<=n:
+            return even_func(k)+helper(k+1,n,odd_func,even_func)
+        else:
+            return 0
+            
+    return helper(1,n,odd_func,even_func)
+
 
 
 def next_smaller_dollar(bill):
@@ -106,7 +130,18 @@ def count_dollars(total):
     >>> check(HW_SOURCE_FILE, 'count_dollars', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    def helper(n,bill):
+        if bill==None:
+            return 0
+        if bill==1:
+            return 1
+        if bill>n:
+            return helper(n,next_smaller_dollar(bill))
+        else:
+            with_max = helper(n-bill,bill)
+            without_max = helper(n,next_smaller_dollar(bill))
+            return with_max + without_max
+    return helper(total,100)
 
 
 def next_larger_dollar(bill):
@@ -142,8 +177,18 @@ def count_dollars_upward(total):
     >>> check(HW_SOURCE_FILE, 'count_dollars_upward', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
-
+    def helper(n,bill):
+        if bill==None:
+            return 0
+        if bill==1:
+            return 1
+        if bill>n:
+            return helper(n,next_smaller_dollar(bill))
+        else:
+            with_max = helper(n-bill,bill)
+            without_max = helper(n,next_smaller_dollar(bill))
+            return with_max + without_max
+    return helper(total,100)
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
