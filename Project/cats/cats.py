@@ -21,7 +21,7 @@ import random
 def pick(paragraphs, select, k):
     """Return the Kth paragraph from PARAGRAPHS for which the SELECT returns True.
     If there are fewer than K such paragraphs, return an empty string.
-
+    返回第k+1个符合select的单词
     Arguments:
         paragraphs: a list of strings representing paragraphs
         select: a function that returns True for paragraphs that meet its criteria
@@ -37,7 +37,13 @@ def pick(paragraphs, select, k):
     ''
     """
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    count = 0
+    for i in paragraphs:
+        if select(i):
+            if count == k:
+                return i
+            count += 1
+    return ''
     # END PROBLEM 1
 
 
@@ -57,7 +63,14 @@ def about(subject):
     assert all([lower(x) == x for x in subject]), "subjects should be lowercase."
 
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    def contain(pragraph): #对提供的一个段落进行处理
+       pragraph =  remove_punctuation(pragraph) # 利用提供函数将标点符号全部去除
+       words = split(pragraph) # 使用空格将单词进行分割
+       for w in words: # 遍历所有单词对单词进行小写化统一
+           if lower(w) in subject:
+               return True
+       return False
+    return contain
     # END PROBLEM 2
 
 
@@ -87,7 +100,15 @@ def accuracy(typed, source):
     typed_words = split(typed)
     source_words = split(source)
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    if typed_words == []:
+        return 100.0 if source_words == [] else 0.0
+    if source_words == []:
+        return 0.0
+    score = 0
+    for i in range(min(len(typed_words), len(source_words))):
+        if typed_words[i] == source_words[i]:
+            score += 1
+    return 100.0 * score / len(typed_words)
     # END PROBLEM 3
 
 
@@ -105,7 +126,7 @@ def wpm(typed, elapsed):
     """
     assert elapsed > 0, "Elapsed time must be positive"
     # BEGIN PROBLEM 4
-    "*** YOUR CODE HERE ***"
+    return len(typed)/5/ elapsed * 60.0
     # END PROBLEM 4
 
 
@@ -166,7 +187,19 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     'testing'
     """
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    if typed_word in word_list:
+        return typed_word
+    else:
+        best_score = limit
+        best = None
+        for i in range(len(word_list)-1,-1,-1):
+            if diff_function(typed_word, word_list[i], limit) <= best_score:
+                best_score = diff_function(typed_word, word_list[i], limit)
+                best = word_list[i]
+        if best == None:
+            return typed_word
+        else:
+            return best
     # END PROBLEM 5
 
 
@@ -193,7 +226,18 @@ def furry_fixes(typed, source, limit):
     5
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    if abs(len(typed) - len(source)) > limit:
+        return limit + 1
+    def helper(typed,source,i,diff):
+        if diff > limit:
+            return diff
+        elif i >= len(typed) or i >= len(source):
+            return max(diff+len(typed)-i,diff+len(source)-i)
+        elif typed[i] == source[i]:
+            return helper(typed,source,i+1,diff)
+        else:
+            return helper(typed,source,i+1,diff+1)
+    return helper(typed,source,0,0)
     # END PROBLEM 6
 
 
@@ -214,23 +258,36 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-    if ___________: # Base cases should go here, you may add more base cases as needed.
+    if typed == source: # Base cases should go here, you may add more base cases as needed.
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return 0
         # END
-    # Recursive cases should go below here
-    if ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    else:
-        add = ... # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    # i是typed处理到的位置，j是source处理到的位置，edits是当前已经进行的编辑次数
+    def helper(i, j, edits):
+        # 剪枝：当前编辑次数已超过limit，停止递归
+        if edits > limit:
+            return limit + 1
+
+        # 若s1和s2都处理完，返回当前编辑次数
+        if i == len(typed) and j == len(source):
+            return edits
+        # s1处理完，剩下的只能插入
+        if i == len(typed):
+            return edits + (len(source) - j)
+        # s2处理完，剩下的只能删除
+        if j == len(source):
+            return edits + (len(typed) - i)
+        if typed[i] == source[j]:
+            # 字符相同，不需要编辑
+            return helper(i + 1, j + 1, edits)
+        else:
+            # 尝试三种编辑操作：
+            insert = helper(i, j + 1, edits + 1)   # 插入s2[j]到s1
+            delete = helper(i + 1, j, edits + 1)   # 删除s1[i]
+            replace = helper(i + 1, j + 1, edits + 1)  # 将s1[i]替换为s2[j]
+            return min(insert, delete, replace)
+    return helper(0, 0, 0)
+
 
 
 # Ignore the line below
