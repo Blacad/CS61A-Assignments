@@ -1,3 +1,4 @@
+# Tree recursion and data abstraction
 def divide(quotients, divisors):
     """Return a dictonary in which each quotient q is a key for the list of
     divisors that it divides evenly.
@@ -7,9 +8,9 @@ def divide(quotients, divisors):
     >>> divide(range(1, 5), range(20, 25))
     {1: [20, 21, 22, 23, 24], 2: [20, 22, 24], 3: [21, 24], 4: [20, 24]}
     """
-    return {____: ____ for ____ in ____}
+    return {q:[d for d in divisors if d%q==0] for q in quotients}
 
-
+# 该函数的实现还是有点麻烦的需要考虑在字符串的加与减，将字符串视作list作切片处理正好-len是去掉最新添加的
 def buy(fruits_to_buy, prices, total_amount):
     """Print ways to buy some of each fruit so that the sum of prices is amount.
 
@@ -29,10 +30,12 @@ def buy(fruits_to_buy, prices, total_amount):
             print(cart)
         elif fruits and amount > 0:
             fruit = fruits[0]
-            price = ____
-            for k in ____:
+            price = prices[fruit]
+            for k in range(1,amount // price + 1):
                 # Hint: The display function will help you add fruit to the cart.
-                add(____, ____, ____)
+                cart += display(fruit, k)
+                add(fruits[1:], amount-k*price, cart)
+                cart = cart[:-len(display(fruit, k))]
     add(fruits_to_buy, total_amount, '')
 
 
@@ -67,6 +70,9 @@ def distance(city_a, city_b):
     5.0
     """
     "*** YOUR CODE HERE ***"
+    lat_a, lon_a = get_lat(city_a), get_lon(city_a)
+    lat_b, lon_b = get_lat(city_b), get_lon(city_b)
+    return sqrt((lat_a - lat_b)**2 + (lon_a - lon_b)**2)
 
 def closer_city(lat, lon, city_a, city_b):
     """
@@ -84,6 +90,13 @@ def closer_city(lat, lon, city_a, city_b):
     'Bucharest'
     """
     "*** YOUR CODE HERE ***"
+    target = make_city('target', lat, lon)
+    dist_a = distance(target, city_a)
+    dist_b = distance(target, city_b)
+    if dist_a < dist_b:
+        return get_name(city_a)
+    else:
+        return get_name(city_b)
 
 def check_city_abstraction():
     """
