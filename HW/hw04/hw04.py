@@ -13,7 +13,13 @@ def shuffle(s):
     """
     assert len(s) % 2 == 0, 'len(seq) must be even'
     "*** YOUR CODE HERE ***"
-
+    s_left = s[:len(s) // 2]
+    s_right = s[len(s) // 2:]
+    result = []
+    for i in range(len(s_left)):
+        result.append(s_left[i])
+        result.append(s_right[i])
+    return result
 
 def deep_map(f, s):
     """Replace all non-list elements x with f(x) in the nested list s.
@@ -38,6 +44,11 @@ def deep_map(f, s):
     True
     """
     "*** YOUR CODE HERE ***"
+    for i in range(len(s)):
+        if isinstance(s[i], list):
+            deep_map(f, s[i])  # 递归处理子列表
+        else:
+            s[i] = f(s[i])     # 就地修改元素
 
 
 HW_SOURCE_FILE=__file__
@@ -47,11 +58,14 @@ def planet(mass):
     """Construct a planet of some mass."""
     assert mass > 0
     "*** YOUR CODE HERE ***"
+    return ['planet', mass]
+    
 
 def mass(p):
     """Select the mass of a planet."""
     assert is_planet(p), 'must call mass on a planet'
     "*** YOUR CODE HERE ***"
+    return p[1]
 
 def is_planet(p):
     """Whether p is a planet."""
@@ -83,6 +97,7 @@ def total_mass(m):
         assert is_mobile(m), "must get total mass of a mobile or a planet"
         return total_mass(end(left(m))) + total_mass(end(right(m)))
 
+# 每个mobile都需平衡
 def balanced(m):
     """Return whether m is balanced.
 
@@ -104,6 +119,18 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    left_val = length(left(m)) * total_mass(end(left(m)))
+    right_val = length(right(m)) * total_mass(end(right(m)))
+    if left_val != right_val:
+        return False
+    elif is_planet(end(left(m))) and is_planet(end(right(m))):
+        return True
+    elif is_planet(end(left(m))):
+        return balanced(end(right(m)))
+    elif is_planet(end(right(m))):
+        return balanced(end(left(m)))
+    else:
+        return balanced(end(left(m))) and balanced(end(right(m)))
 
 
 def berry_finder(t):
@@ -124,6 +151,12 @@ def berry_finder(t):
     True
     """
     "*** YOUR CODE HERE ***"
+    if label(t) == 'berry':
+        return True
+    for b in branches(t):
+        if berry_finder(b):
+            return True
+    return False
 
 
 HW_SOURCE_FILE=__file__
@@ -139,8 +172,12 @@ def max_path_sum(t):
     17
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return label(t)
+    else:
+        return label(t) + max([max_path_sum(b) for b in branches(t)])
 
-
+# mobile是一个完整的杠杆、arm是杠杆的一边、arm由length和mobile_or_planet组成
 def mobile(left, right):
     """Construct a mobile from a left arm and a right arm."""
     assert is_arm(left), "left must be an arm"
