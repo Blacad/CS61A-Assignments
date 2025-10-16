@@ -123,10 +123,12 @@ def addition(args):
         else:
             result = result + calc_eval(args.first)
             return helper(result, args.rest)
+    if args == nil:
+        return 0
     if args.rest == nil:
         return calc_eval(args.first)
     else:
-        return helper(args.first, args.rest)
+        return helper(calc_eval(args.first), args.rest)
 def subtraction(args):
     def helper(result, args):
         if args.rest == nil:
@@ -137,7 +139,7 @@ def subtraction(args):
     if args.rest == nil:
         return calc_eval(args.first)
     else:
-        return helper(args.first, args.rest)
+        return helper(calc_eval(args.first), args.rest)
     
 def multiplication(args):
     def helper(result, args):
@@ -146,10 +148,12 @@ def multiplication(args):
         else:
             result = result * calc_eval(args.first)
             return helper(result, args.rest)
+    if args == nil:
+        return 1
     if args.rest == nil:
         return calc_eval(args.first)
     else:
-        return helper(args.first, args.rest)
+        return helper(calc_eval(args.first), args.rest)
 def division(args):
     def helper(result, args):
         if args.rest == nil:
@@ -160,7 +164,7 @@ def division(args):
     if args.rest == nil:
         return calc_eval(args.first)
     else:
-        return helper(args.first, args.rest)
+        return helper(calc_eval(args.first), args.rest)
 OPERATORS = { "//": floor_div, "+": addition, "-": subtraction, "*": multiplication, "/": division }
 
 class Pair:
