@@ -479,7 +479,6 @@ one-through-four
 
 (apply + '(1 2 3 4))
 ; expect 10
-
 (apply (if #f + append) '((1 2) (3 4)))
 ; expect (1 2 3 4)
 
